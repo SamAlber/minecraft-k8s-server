@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: minecraft-service
+  labels:
+    app: minecraft
+spec: # Describes the desired state of the Service.
+  type: LoadBalancer
+  ports:
+  - port: 25565          # External port (LoadBalancer's endpoint) 
+    targetPort: 25565    # Pod port 
+    # nodePort: 30001    # Fixed NodePort (optional, Kubernetes assigns one if omitted)
+    protocol: TCP
+  selector:
+    app: minecraft
+
+# Is the service cretes a nodeport? 
+# The Service defined in the manifest with type: LoadBalancer does not create a NodePort directly for user access. Instead, it:
+
+#Exposes the Service via a LoadBalancer:
+
+#When type: LoadBalancer is used, Kubernetes provisions a cloud load balancer (e.g., an AWS Elastic Load Balancer in your case) to route external traffic to your Service.
+#The load balancer forwards traffic to the appropriate NodePort on the worker nodes automatically.
+#Creates a NodePort as Part of the LoadBalancer:
+
+#Under the hood, Kubernetes assigns a NodePort to the Service as part of the LoadBalancer setup. However, this NodePort is used internally by the LoadBalancer to forward traffic to the pods.
+#The NodePort is not directly exposed to end users because the LoadBalancer manages the public-facing endpoint.
+
+# External Access:
+# A public-facing endpoint (e.g., http://<loadbalancer-ip>:25565) is created by the LoadBalancer.
+# Internal NodePort:
+# Kubernetes assigns an internal NodePort (e.g., 31000–32767) to route traffic from the LoadBalancer to the nodes.
